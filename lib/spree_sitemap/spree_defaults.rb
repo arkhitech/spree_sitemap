@@ -26,7 +26,7 @@ module SpreeSitemap::SpreeDefaults
     active_products = Spree::Product.active.uniq
 
     add(products_path, options.merge(lastmod: active_products.last_updated))
-    active_products.each do |product|
+    active_products.find_each do |product|
       add_product(product, options)
     end
   end
@@ -49,22 +49,22 @@ module SpreeSitemap::SpreeDefaults
   def add_pages(options = {})
     # TODO: this should be refactored to add_pages & add_page
 
-    Spree::Page.active.each do |page|
+    Spree::Page.active.find_each do |page|
       add(page.path, options.merge(lastmod: page.updated_at))
     end if gem_available? 'spree_essential_cms'
 
-    Spree::Page.visible.each do |page|
+    Spree::Page.visible.find_each do |page|
       add(page.slug, options.merge(lastmod: page.updated_at))
     end if gem_available? 'spree_static_content'
   end
 
   def add_taxons(options = {})
-    Spree::Taxon.roots.each { |taxon| add_taxon(taxon, options) }
+    Spree::Taxon.roots.find_each { |taxon| add_taxon(taxon, options) }
   end
 
   def add_taxon(taxon, options = {})
     add(nested_taxons_path(taxon.permalink), options.merge(lastmod: taxon.products.last_updated)) if taxon.permalink.present?
-    taxon.children.each { |child| add_taxon(child, options) }
+    taxon.children.find_each { |child| add_taxon(child, options) }
   end
 
   def gem_available?(name)

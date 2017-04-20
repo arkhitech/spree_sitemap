@@ -64,9 +64,23 @@ module SpreeSitemap::SpreeDefaults
 
   def add_taxon(taxon, options = {})
     add(nested_taxons_path(taxon.permalink), options.merge(lastmod: taxon.products.last_updated)) if taxon.permalink.present?
-    taxon.children.find_each { |child| add_taxon(child, options) }
+   # taxon.children.each { |child| add_taxon(child, options) }
   end
+  
+  def add_shops(options = {})
+    active_shops = Spree::HowmuchShop
 
+    add(shops_path, options)
+    active_shops.find_each do |shop|
+      add_shop(shop, options)
+    end
+  end
+  
+  def add_shop(shop, options = {})
+    opts = options.merge(lastmod: shop.updated_at)
+    add(shop_path(shop), opts)
+  end
+  
   def gem_available?(name)
     Gem::Specification.find_by_name(name)
   rescue Gem::LoadError

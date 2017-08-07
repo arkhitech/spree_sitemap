@@ -89,6 +89,18 @@ module SpreeSitemap::SpreeDefaults
     Gem.available?(name)
   end
 
+  def gem_available?(name)
+    Gem::Specification.find_by_name(name)
+  rescue Gem::LoadError
+    false
+  rescue
+    Gem.available?(name)
+  end
+
+  def main_app
+    Rails.application.routes.url_helpers
+  end
+
   private
 
   ##

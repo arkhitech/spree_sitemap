@@ -68,7 +68,7 @@ module SpreeSitemap::SpreeDefaults
   end
   
   def add_shops(options = {})
-    active_shops = Spree::HowmuchShop
+    active_shops = Spree::HowmuchShop.published.approved
 
     add(shops_path, options)
     active_shops.find_each do |shop|
